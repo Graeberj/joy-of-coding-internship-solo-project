@@ -15,9 +15,10 @@ export async function GET() {
 export async function POST(req) {
   try {
     const body = await req.json();
-    const ticketData = body.formData;
+    console.log("Received data for new task:", body);
+    const taskData = body.formData;
 
-    await Task.create(ticketData);
+    await Task.create(taskData);
 
     return NextResponse.json({ message: "Task Created" }, { status: 201 });
   } catch (err) {

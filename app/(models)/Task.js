@@ -8,7 +8,8 @@ const taskSchema = new Schema(
     title: String,
     description: String,
     category: String,
-    isCompleted: Boolean,
+    status: String,
+    dueDate: Date,
   },
   {
     timestamps: true,

@@ -1,23 +1,20 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const EditTaskForm = ({ task }) => {
   const EDITMODE = task._id === "new" ? false : true;
   const router = useRouter();
-  const startingTaskData = {
-    title: "",
-    description: "",
-    isCompleted: false,
-  };
 
-  if (EDITMODE) {
-    startingTaskData["title"] = task.title;
-    startingTaskData["description"] = task.description;
-    startingTaskData["status"] = task.status;
-    startingTaskData["category"] = task.category;
-    startingTaskData["isDone"] = task.isDone;
-  }
+  const startingTaskData = {
+    title: EDITMODE ? task.title : "",
+    description: EDITMODE ? task.description : "",
+    status: EDITMODE ? task.status : "not started",
+    category: EDITMODE ? task.category : "Daily Task",
+    dueDate: EDITMODE && task.dueDate ? new Date(task.dueDate) : null,
+  };
 
   const [formData, setFormData] = useState(startingTaskData);
 
@@ -59,6 +56,10 @@ const EditTaskForm = ({ task }) => {
     router.push("/");
   };
 
+  const handleDateChange = (date) => {
+    setFormData((prev) => ({ ...prev, dueDate: date }));
+  };
+
   const categories = ["Urgent", "Long Term", "Daily Task"];
 
   return (
@@ -77,6 +78,13 @@ const EditTaskForm = ({ task }) => {
           onChange={handleChange}
           required={true}
           value={formData.title}
+        />
+        <label>Due Date</label>
+        <DatePicker
+          selected={formData.dueDate}
+          onChange={handleDateChange}
+          dateFormat="MM/dd/yy"
+          timeFormat={false}
         />
         <label>Description</label>
         <textarea
@@ -98,6 +106,12 @@ const EditTaskForm = ({ task }) => {
               {category}
             </option>
           ))}
+        </select>
+        <label>Status</label>
+        <select name="status" value={formData.status} onChange={handleChange}>
+          <option value="not started">Not Started</option>
+          <option value="started">Started</option>
+          <option value="done">Done</option>
         </select>
 
         <input

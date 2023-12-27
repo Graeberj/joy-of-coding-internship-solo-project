@@ -18,7 +18,23 @@ const getTasks = async () => {
 };
 
 async function toggleComplete(id, isCompleted) {
-  "use server";
+  try {
+    const res = await fetch(`http://localhost:3000/api/Tasks/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isCompleted: !isCompleted }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to update task");
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error("Error updating task:", error);
+  }
 }
 
 const Dashboard = async () => {
@@ -44,12 +60,7 @@ const Dashboard = async () => {
                 {tasks
                   .filter((task) => task.category === uniqueCategory)
                   .map((filteredTask, _index) => (
-                    <TaskCard
-                      id={_index}
-                      key={_index}
-                      task={filteredTask}
-                      toggleComplete={toggleComplete}
-                    />
+                    <TaskCard id={_index} key={_index} task={filteredTask} />
                   ))}
               </div>
             </div>
